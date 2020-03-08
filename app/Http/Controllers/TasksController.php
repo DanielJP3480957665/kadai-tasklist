@@ -17,6 +17,8 @@ class TasksController extends Controller
     {
         $tasks = Task::all();
         
+        
+        
         return view('tasks.index', [
             'tasks' => $tasks,
         ]);
@@ -31,10 +33,15 @@ class TasksController extends Controller
      */
     public function create()
     {
-        $tasks = new Task;
+        
+        
+        
+        
+        $task = new Task;
         
         return view('tasks.create',[
-            'tasks'=> $tasks,
+            'task'=> $task,
+            
             ]);
     }
 
@@ -46,12 +53,22 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
-        $tasks = new Task;
         
-        $tasks->content =$request->content;
-        $tasks->save();
+        $this->validate($request,[
+            'content' => 'required|max:191',
+            'status' => 'required|max:10',
+            ]);
         
-        return redairect('/');
+        
+        
+        $task = new Task;
+        
+        $task->status = $request->status;
+        $task->content =$request->content;
+        
+        $task->save();
+        
+        return redirect('/');
     }
 
     /**
@@ -62,6 +79,8 @@ class TasksController extends Controller
      */
     public function show($id)
     {
+        
+        
         $task =Task::find($id);
         
         return view('tasks.show',[
@@ -77,7 +96,9 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
+        
         $task =Task::find($id);
+        
         
         return view('tasks.edit',[
             'task'=>$task,
@@ -93,7 +114,15 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
+        
+        $this->validate($request, [
+            'status' => 'required|max:191',   
+            'content' => 'required|max:191',
+        ]);
+       
+        
         $task = Task::find($id);
+        $task->status = $request-> status;
         $task->content = $request->content;
         $task->save();
         
@@ -109,8 +138,9 @@ class TasksController extends Controller
     public function destroy($id)
     {
         $task = Task::find($id);
-        $task->dalete();
         
-        return redairect('/');
+        $task->delete();
+        
+        return redirect('/');
     }
 }
