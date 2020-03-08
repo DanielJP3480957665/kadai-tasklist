@@ -80,7 +80,6 @@ class TasksController extends Controller
     public function show($id)
     {
         
-        
         $task =Task::find($id);
         
         return view('tasks.show',[
@@ -116,7 +115,7 @@ class TasksController extends Controller
     {
         
         $this->validate($request, [
-            'status' => 'required|max:191',   
+            'status' => 'required|max:10',   
             'content' => 'required|max:191',
         ]);
        
