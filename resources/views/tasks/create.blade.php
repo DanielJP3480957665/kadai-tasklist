@@ -2,10 +2,6 @@
 
 @section('content')
 
-   
-
-    
-
 <h1>新規タスクの作成</h1>
 
  <div class="row">
