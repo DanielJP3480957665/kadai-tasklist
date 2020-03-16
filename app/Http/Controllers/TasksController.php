@@ -14,17 +14,22 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
+    //$tasks = Task::all();
+    //$tasks = Task::where('user_id',$user->id);
     {
+        $data = [];
         
-        $tasks = Task::all();
+        if(\Auth::check()) {
+            
         $user = \Auth::user();
+        $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
         
-        
-        return view('tasks.index', [
-            'tasks' => $tasks,
-        ]);
-    
-        
+        $data = [
+            'user' => $user,
+            'tasks'=> $tasks,
+            ];
+        }
+        return view('tasks.index',$data);
     }
 
     /**
@@ -37,10 +42,7 @@ class TasksController extends Controller
         $task = new Task;
         
         return view('tasks.create',[
-            
-            'task'=> $task,
-            
-            
+                'task'=> $task,
             ]);
     }
 
@@ -52,22 +54,15 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
-        
         $this->validate($request,[
             'content' => 'required|max:191',
             'status' => 'required|max:10',
             ]);
         
-        
-        
-        
         $task = new Task;
-        
         $task->user_id =\Auth::id();
-        
         $task->status = $request->status;
         $task->content =$request->content;
-        
         $task->save();
         
         return redirect('/');
@@ -83,14 +78,12 @@ class TasksController extends Controller
     {
         $task =Task::find($id);
         
-         if(\Auth::id() != $task->user_id){
-             
-              redirect('tasks.index');
-             
-         }
+        if(\Auth::id() != $task->user_id){
+            redirect('/');
+        }
          
        return view('tasks.show',[
-            'task' =>$task,
+                'task' =>$task,
             ]);
     }
 
@@ -106,12 +99,11 @@ class TasksController extends Controller
         $task =Task::find($id);
         
         if(\Auth::id() != $task->user_id){
-            
-           return redirect('/');
+            return redirect('/');
         }
         
-         return view('tasks.edit',[
-            'task'=>$task,
+        return view('tasks.edit',[
+                'task'=>$task,
             ]);
         
     }
@@ -135,14 +127,14 @@ class TasksController extends Controller
         $task = Task::find($id);
         
         if(\Auth::id() != $task->user_id){
-         return redirect('/');
+            return redirect('/');
         }
         
-        $task->status = $request-> status;
-          $task->content = $request->content;
-          $task->save();
-          return redirect('/');
-       
+        $task->status  = $request-> status;
+        $task->content = $request->content;https://daniel-tasklist-2.herokuapp.com/
+        $task->save();
+        
+        return redirect('/');
     }
 
     /**
